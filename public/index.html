@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LolaShop - Inicio</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <h1>LolaShop</h1>
+            </div>
+            <nav>
+                <a href="index.html" class="active"><i class="fas fa-home"></i> Inicio</a>
+                <a href="productos.html"><i class="fas fa-box"></i> Productos</a>
+                <a href="ventas.html"><i class="fas fa-cash-register"></i> Ventas</a>
+                <a href="inventario.html"><i class="fas fa-clipboard-list"></i> Inventario</a>
+                <a href="importacion.html"><i class="fas fa-file-import"></i> Importar</a>
+                <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
+            </nav>
+        </header>
+
+        <main class="dashboard">
+            <div class="welcome-banner">
+                <div class="welcome-text">
+                    <h2>Hola, Administrador</h2>
+                    <p>Aquí tienes el resumen de tu negocio hoy.</p>
+                </div>
+                <div class="date-badge">
+                    <i class="far fa-calendar-alt"></i> <span id="current-date">Hoy</span>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Stat Cards -->
+                <div class="stat-card blue">
+                    <div class="stat-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Productos</h3>
+                        <p class="stat-number" id="total-productos">...</p>
+                        <a href="productos.html" class="stat-link">Gestionar <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="stat-card green">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Ventas Hoy</h3>
+                        <p class="stat-number" id="ventas-hoy">...</p>
+                        <a href="ventas.html" class="stat-link">Nueva Venta <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="stat-card orange">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Ingresos Hoy</h3>
+                        <p class="stat-number" id="ingresos-hoy">...</p>
+                        <span class="stat-sub">Balance diario</span>
+                    </div>
+                </div>
+
+                <div class="stat-card red">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Bajo Stock</h3>
+                        <p class="stat-number" id="bajo-stock">...</p>
+                        <a href="inventario.html" class="stat-link">Revisar <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-sections">
+                <div class="section-card wide">
+                    <div class="section-header">
+                        <h3><i class="fas fa-history"></i> Ventas Recientes</h3>
+                        <a href="ventas.html" class="btn-sm">Ver Todas</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="modern-table" id="tabla-ventas-recientes">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Productos</th>
+                                    <th>Total</th>
+                                    <th>Hora</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Las ventas se cargarán aquí con JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="section-card narrow">
+                    <div class="section-header">
+                        <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <button onclick="window.location.href='productos.html'" class="action-btn">
+                            <i class="fas fa-plus-circle"></i> Nuevo Producto
+                        </button>
+                        <button onclick="window.location.href='importacion.html'" class="action-btn">
+                            <i class="fas fa-file-import"></i> Importar Lista
+                        </button>
+                        <button onclick="window.location.href='inventario.html'" class="action-btn">
+                            <i class="fas fa-clipboard-check"></i> Auditoría Stock
+                        </button>
+                        <button id="btn-update-prices-dashboard" class="action-btn">
+                            <i class="fas fa-sync"></i> Actualizar Precios
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Sistema de Gestión LolaShop © 2026 | Desarrollado con ❤️</p>
+        </footer>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/test_system.js"></script>
+    <script>
+        // Simple script to set date
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', options);
+        
+        // Wire up update button if it exists
+        document.getElementById('btn-update-prices-dashboard')?.addEventListener('click', async () => {
+             const btn = document.getElementById('btn-update-prices-dashboard');
+             const originalHtml = btn.innerHTML;
+             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando...';
+             btn.disabled = true;
+             try {
+                const health = await fetch(getApiUrl('/api/health')).catch(() => null);
+                if (!health || !health.ok) {
+                    alert('El servidor no está disponible. Inicia el backend primero.');
+                    return;
+                }
+                const url = getApiUrl('/api/products/update-scraping');
+                await fetch(url, { method: 'POST' });
+                alert('Actualización de precios iniciada en segundo plano.');
+             } catch(e) {
+                console.error(e);
+                alert('Error conectando al servidor.');
+             } finally {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+             }
+        });
+    </script>
+</body>
+</html>

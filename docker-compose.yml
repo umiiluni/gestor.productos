@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend-node
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend-node/database.sqlite:/app/database.sqlite
+      - ./public:/app/public # Montar frontend para servirlo estáticamente si se desea
+    restart: always
+    environment:
+      - NODE_ENV=production
+
+# Para una app completa, aquí agregaríamos un servicio separado para el frontend si usáramos React/Vue build steps,
+# pero como es HTML/JS estático, el backend de Express lo sirve perfectamente desde /public.

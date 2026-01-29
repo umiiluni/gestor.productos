@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/scanner.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <h1>LolaShop</h1>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="productos.html" class="active"><i class="fas fa-box"></i> Productos</a>
+                <a href="ventas.html"><i class="fas fa-cash-register"></i> Ventas</a>
+                <a href="inventario.html"><i class="fas fa-clipboard-list"></i> Inventario</a>
+                <a href="importacion.html"><i class="fas fa-file-import"></i> Importar</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="page-header">
+                <h2><i class="fas fa-boxes"></i> Gestión de Productos</h2>
+                <div class="header-buttons">
+                    <button class="btn-success" id="btn-exportar-excel">
+                        <i class="fas fa-file-excel"></i> Exportar Excel
+                    </button>
+                    <button class="btn-info" id="btn-actualizar-proveedores">
+                        <i class="fas fa-sync"></i> Actualizar Precios Proveedores
+                    </button>
+                    <button class="btn-primary" id="btn-nuevo-producto">
+                        <i class="fas fa-plus"></i> Nuevo Producto
+                    </button>
+                </div>
+            </div>
+
+            <div class="scanner-section">
+                <div class="scanner-box">
+                    <h3><i class="fas fa-barcode"></i> Escáner de Código de Barras</h3>
+                    <div class="scanner-input-group">
+                        <input type="text" id="input-codigo-barra" placeholder="Escanea o ingresa el código de barras" autofocus>
+                        <button class="btn-scan" id="btn-escanear">
+                            <i class="fas fa-camera"></i> Escanear
+                        </button>
+                        <button class="btn-search" id="btn-buscar-codigo">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                    <div id="scanner-resultado" class="scanner-result"></div>
+                </div>
+            </div>
+
+            <div class="form-container" id="form-producto" style="display: none;">
+                <h3><i class="fas fa-edit"></i> Formulario de Producto</h3>
+                <form id="form-producto-data">
+                    <input type="hidden" id="producto-id">
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="codigo"><i class="fas fa-barcode"></i> Código de Barras *</label>
+                            <input type="text" id="codigo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre"><i class="fas fa-tag"></i> Nombre *</label>
+                            <input type="text" id="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria"><i class="fas fa-folder"></i> Categoría</label>
+                            <select id="categoria">
+                                <option value="Alimentos">Alimentos</option>
+                                <option value="Bebidas">Bebidas</option>
+                                <option value="Limpieza">Limpieza</option>
+                                <option value="Bazar">Bazar</option>
+                                <option value="Electrónica">Electrónica</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="precio"><i class="fas fa-dollar-sign"></i> Precio de Venta *</label>
+                            <input type="number" id="precio" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="costo"><i class="fas fa-money-bill-wave"></i> Costo</label>
+                            <input type="number" id="costo" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="stock"><i class="fas fa-boxes"></i> Stock Inicial</label>
+                            <input type="number" id="stock" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="stock-minimo"><i class="fas fa-exclamation-triangle"></i> Stock Mínimo</label>
+                            <input type="number" id="stock-minimo" value="5">
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">
+                        <h4><i class="fas fa-robot"></i> Configuración de Proveedor (Actualización Automática)</h4>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="supplier-url"><i class="fas fa-link"></i> URL del Producto (Proveedor)</label>
+                            <input type="url" id="supplier-url" placeholder="https://proveedor.com/producto/123">
+                        </div>
+                        <div class="form-group">
+                            <label for="scraping-method"><i class="fas fa-cogs"></i> Método</label>
+                            <select id="scraping-method">
+                                <option value="static">Estático (Rápido)</option>
+                                <option value="dynamic">Dinámico (Playwright)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="selector-price"><i class="fas fa-code"></i> Selector de Precio <small style="color: #666; font-size: 0.8em;">(Para Scraping)</small></label>
+                            <input type="text" id="selector-price" placeholder="Ej: .price-tag o #precio (Selector CSS)">
+                        </div>
+                        <div class="form-group">
+                            <label for="selector-stock"><i class="fas fa-code"></i> Selector de Stock <small style="color: #666; font-size: 0.8em;">(Para Scraping)</small></label>
+                            <input type="text" id="selector-stock" placeholder="Ej: .stock-qty (Selector CSS)">
+                        </div>
+                    </div>
+                    
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-success">
+                            <i class="fas fa-save"></i> Guardar Producto
+                        </button>
+                        <button type="button" class="btn-secondary" id="btn-cancelar">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <h3><i class="fas fa-list"></i> Lista de Productos</h3>
+                <div class="table-controls">
+                    <input type="text" id="buscar-producto" placeholder="Buscar producto...">
+                    <select id="filtrar-categoria">
+                        <option value="">Todas las categorías</option>
+                        <option value="Alimentos">Alimentos</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Limpieza">Limpieza</option>
+                        <option value="Bazar">Bazar</option>
+                    </select>
+                </div>
+                <table id="tabla-productos">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los productos se cargarán aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <footer>
+            <p>Sistema de Gestión LolaShop © 2026 | Versión 1.0</p>
+        </footer>
+    </div>
+
+    <!-- Modal para escáner -->
+    <div id="scanner-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3><i class="fas fa-camera"></i> Escáner de Código de Barras</h3>
+            <div id="scanner-container">
+                <video id="scanner-video" width="100%" height="300"></video>
+                <canvas id="scanner-canvas" style="display: none;"></canvas>
+            </div>
+            <div class="scanner-instructions">
+                <p><i class="fas fa-info-circle"></i> Apunta la cámara hacia un código de barras. Se detectará automáticamente.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="js/productos.js"></script>
+    <script src="js/scanner.js"></script>
+</body>
+</html>

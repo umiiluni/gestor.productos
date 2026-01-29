@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LolaShop - Importar Productos</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/importacion.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/dropzone.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <h1>LolaShop</h1>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="productos.html"><i class="fas fa-box"></i> Productos</a>
+                <a href="ventas.html"><i class="fas fa-cash-register"></i> Ventas</a>
+                <a href="inventario.html"><i class="fas fa-clipboard-list"></i> Inventario</a>
+                <a href="importacion.html" class="active"><i class="fas fa-file-import"></i> Importar</a>
+                <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="page-header">
+                <h2><i class="fas fa-file-import"></i> Importación Masiva de Productos</h2>
+                <div class="header-actions">
+                    <a href="productos.html" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a Productos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Panel de instrucciones -->
+            <div class="instructions-panel">
+                <h3><i class="fas fa-info-circle"></i> Instrucciones de Importación</h3>
+                <div class="instructions-grid">
+                    <div class="instruction-card">
+                        <div class="instruction-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <h4>Formato Excel/CSV</h4>
+                        <p>Usa plantilla con columnas: código, nombre, categoría, precio, stock</p>
+                        <a href="#" id="descargar-plantilla" class="btn-small">
+                            <i class="fas fa-download"></i> Descargar Plantilla
+                        </a>
+                    </div>
+                    
+                    <div class="instruction-card">
+                        <div class="instruction-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h4>Archivos PDF</h4>
+                        <p>PDFs con tablas de precios (texto extraíble, no escaneados)</p>
+                        <span class="badge-info">OCR Disponible</span>
+                    </div>
+                    
+                    <div class="instruction-card">
+                        <div class="instruction-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h4>Resultados</h4>
+                        <p>Productos nuevos se crearán, existentes se actualizarán</p>
+                        <span class="badge-warning">Stock se sumará</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de importación -->
+            <div class="import-section">
+                <div class="import-tabs">
+                    <button class="import-tab active" data-tab="csv">Excel/CSV</button>
+                    <button class="import-tab" data-tab="pdf">PDF</button>
+                    <button class="import-tab" data-tab="ocr">PDF con OCR</button>
+                </div>
+
+                <!-- Tab CSV/Excel -->
+                <div class="tab-content active" id="tab-csv">
+                    <div class="upload-area" id="dropzone-csv">
+                        <div class="upload-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <h3>Arrastra archivos CSV o Excel</h3>
+                        <p>o haz clic para seleccionar</p>
+                        <input type="file" id="file-csv" accept=".csv,.xlsx,.xls" hidden>
+                        <button class="btn-browse" id="browse-csv">
+                            <i class="fas fa-folder-open"></i> Seleccionar Archivo
+                        </button>
+                        <div class="file-info" id="file-info-csv">
+                            No hay archivo seleccionado
+                        </div>
+                    </div>
+
+                    <div class="csv-options">
+                        <h4><i class="fas fa-cog"></i> Opciones de CSV</h4>
+                        <div class="options-grid">
+                            <div class="option-group">
+                                <label>Separador de columnas:</label>
+                                <select id="csv-separator">
+                                    <option value=",">Coma (,)</option>
+                                    <option value=";">Punto y coma (;)</option>
+                                    <option value="\t">Tabulador</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label>Primera fila como encabezados:</label>
+                                <input type="checkbox" id="csv-headers" checked>
+                            </div>
+                            <div class="option-group">
+                                <label>Actualizar productos existentes:</label>
+                                <input type="checkbox" id="csv-update" checked>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab PDF -->
+                <div class="tab-content" id="tab-pdf">
+                    <div class="upload-area" id="dropzone-pdf">
+                        <div class="upload-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3>Arrastra archivos PDF</h3>
+                        <p>PDFs con texto extraíble (no imágenes escaneadas)</p>
+                        <input type="file" id="file-pdf" accept=".pdf" hidden>
+                        <button class="btn-browse" id="browse-pdf">
+                            <i class="fas fa-folder-open"></i> Seleccionar PDF
+                        </button>
+                        <div class="file-info" id="file-info-pdf">
+                            No hay archivo seleccionado
+                        </div>
+                    </div>
+
+                    <div class="pdf-options">
+                        <h4><i class="fas fa-cog"></i> Configuración PDF</h4>
+                        <div class="options-grid">
+                            <div class="option-group">
+                                <label>Páginas a procesar:</label>
+                                <input type="text" id="pdf-pages" placeholder="Ej: 1-5 o 1,3,5">
+                            </div>
+                            <div class="option-group">
+                                <label>Buscar columnas:</label>
+                                <div class="column-selector">
+                                    <input type="text" id="col-codigo" placeholder="Columna código" value="CODIGO">
+                                    <input type="text" id="col-nombre" placeholder="Columna nombre" value="DESCRIPCION">
+                                    <input type="text" id="col-precio" placeholder="Columna precio" value="PRECIO">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab OCR -->
+                <div class="tab-content" id="tab-ocr">
+                    <div class="upload-area" id="dropzone-ocr">
+                        <div class="upload-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3>PDF Escaneados (OCR)</h3>
+                        <p>Para PDFs que son imágenes escaneadas</p>
+                        <input type="file" id="file-ocr" accept=".pdf,.jpg,.jpeg,.png" hidden multiple>
+                        <button class="btn-browse" id="browse-ocr">
+                            <i class="fas fa-folder-open"></i> Seleccionar Archivos
+                        </button>
+                        <div class="file-info" id="file-info-ocr">
+                            No hay archivos seleccionados
+                        </div>
+                    </div>
+
+                    <div class="ocr-warning">
+                        <div class="warning-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="warning-content">
+                            <h4>Nota sobre OCR</h4>
+                            <p>El reconocimiento OCR puede ser más lento y menos preciso. 
+                            Verifica los resultados antes de importar.</p>
+                        </div>
+                    </div>
+
+                    <div class="ocr-options">
+                        <h4><i class="fas fa-cog"></i> Configuración OCR</h4>
+                        <div class="options-grid">
+                            <div class="option-group">
+                                <label>Idioma del texto:</label>
+                                <select id="ocr-language">
+                                    <option value="spa">Español</option>
+                                    <option value="eng">Inglés</option>
+                                    <option value="por">Portugués</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label>Calidad OCR:</label>
+                                <select id="ocr-quality">
+                                    <option value="fast">Rápido</option>
+                                    <option value="balanced" selected>Balanceado</option>
+                                    <option value="accurate">Preciso</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab API -->
+                <div class="tab-content" id="tab-api">
+                    <div class="upload-area">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-download-alt"></i>
+                        </div>
+                        <h3>Importar desde API Externa</h3>
+                        <p>Conecta y descarga productos desde un proveedor externo</p>
+                        
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="api-url"><i class="fas fa-link"></i> Endpoint URL</label>
+                                <input type="url" id="api-url" placeholder="https://api.proveedor.com/v1/productos">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="api-key"><i class="fas fa-key"></i> API Key (Opcional)</label>
+                                <input type="text" id="api-key" placeholder="Bearer Token o API Key">
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">
+                            <h4><i class="fas fa-map-signs"></i> Mapeo de Campos (JSON Path)</h4>
+                            <small>Ej: si el JSON es {"data": [{"price": 100}]}, usa "price"</small>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Código</label>
+                                <input type="text" id="map-codigo" placeholder="ej: sku, id, code" value="sku">
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="map-nombre" placeholder="ej: name, title" value="name">
+                            </div>
+                            <div class="form-group">
+                                <label>Precio</label>
+                                <input type="text" id="map-precio" placeholder="ej: price, amount" value="price">
+                            </div>
+                            <div class="form-group">
+                                <label>Stock</label>
+                                <input type="text" id="map-stock" placeholder="ej: stock, inventory.qty" value="stock">
+                            </div>
+                             <div class="form-group">
+                                <label>Ruta Raíz (Array)</label>
+                                <input type="text" id="map-root" placeholder="ej: data.products (dejar vacío si es raíz)" value="">
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" id="btn-test-api">
+                            <i class="fas fa-plug"></i> Probar y Previsualizar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Previsualización -->
+                <div class="preview-section">
+                    <h3><i class="fas fa-table"></i> Previsualización</h3>
+                    <div class="preview-container">
+                        <div class="preview-header">
+                            <div class="preview-stats">
+                                <span id="preview-count">0 productos detectados</span>
+                                <span id="preview-new">0 nuevos</span>
+                                <span id="preview-update">0 actualizaciones</span>
+                            </div>
+                            <button class="btn-small" id="btn-refresh-preview">
+                                <i class="fas fa-sync"></i> Actualizar
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table id="preview-table">
+                                <thead>
+                                    <tr>
+                                        <th>Estado</th>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Categoría</th>
+                                        <th>Precio</th>
+                                        <th>Stock</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Los datos se cargarán aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="actions-section">
+                    <div class="actions-left">
+                        <button class="btn-secondary" id="btn-clear">
+                            <i class="fas fa-trash"></i> Limpiar Todo
+                        </button>
+                        <button class="btn-secondary" id="btn-test">
+                            <i class="fas fa-vial"></i> Probar Importación
+                        </button>
+                    </div>
+                    <div class="actions-right">
+                        <button class="btn-success" id="btn-import">
+                            <i class="fas fa-file-import"></i> Ejecutar Importación
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Historial -->
+                <div class="history-section">
+                    <h3><i class="fas fa-history"></i> Historial de Importaciones</h3>
+                    <div class="table-container">
+                        <table id="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Archivo</th>
+                                    <th>Tipo</th>
+                                    <th>Productos</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Historial se cargará aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Sistema de Gestión LolaShop © 2026 | Versión 1.0</p>
+        </footer>
+    </div>
+
+    <!-- Modal de progreso -->
+    <div id="progress-modal" class="modal">
+        <div class="modal-content">
+            <div class="progress-header">
+                <h3><i class="fas fa-sync fa-spin"></i> Procesando Importación</h3>
+            </div>
+            <div class="progress-body">
+                <div class="progress-text">
+                    <p id="progress-message">Inicializando...</p>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="progress-stats">
+                    <span id="progress-current">0</span> / 
+                    <span id="progress-total">0</span> productos
+                </div>
+            </div>
+            <div class="progress-footer">
+                <button class="btn-secondary" id="btn-cancel-import">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de resultados -->
+    <div id="results-modal" class="modal">
+        <div class="modal-content">
+            <div class="results-header">
+                <h3><i class="fas fa-check-circle"></i> Importación Completada</h3>
+            </div>
+            <div class="results-body">
+                <div class="result-summary">
+                    <div class="result-item success">
+                        <i class="fas fa-plus-circle"></i>
+                        <div>
+                            <h4>Productos Nuevos</h4>
+                            <p id="result-new">0</p>
+                        </div>
+                    </div>
+                    <div class="result-item update">
+                        <i class="fas fa-edit"></i>
+                        <div>
+                            <h4>Actualizados</h4>
+                            <p id="result-updated">0</p>
+                        </div>
+                    </div>
+                    <div class="result-item error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div>
+                            <h4>Errores</h4>
+                            <p id="result-errors">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-actions">
+                    <button class="btn-primary" id="btn-view-products">
+                        <i class="fas fa-box"></i> Ver Productos
+                    </button>
+                    <button class="btn-secondary" id="btn-close-results">
+                        <i class="fas fa-times"></i> Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/dropzone.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+    <script src="js/importacion/importacion-core.js"></script>
+    <script src="js/importacion/csv-processor.js"></script>
+    <script src="js/importacion/pdf-processor.js"></script>
+    <script src="js/importacion/ocr-processor.js"></script>
+    <script src="js/importacion/api-processor.js"></script>
+    <script src="js/importacion/preview-manager.js"></script>
+    <script src="js/importacion/history-manager.js"></script>
+    <script src="js/importacion/import-manager.js"></script>
+    <script src="js/importacion/ui-manager.js"></script>
+    <script src="js/importacion.js"></script>
+</body>
+</html>

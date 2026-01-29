@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LolaShop - Reportes y Estadísticas</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .bg-blue { background: #3498db; }
+        .bg-green { background: #2ecc71; }
+        .bg-red { background: #e74c3c; }
+        .bg-yellow { background: #f1c40f; }
+        
+        .stat-info h3 {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .stat-info p {
+            margin: 5px 0 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .tables-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .date-filter select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <h1>LolaShop</h1>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="productos.html"><i class="fas fa-box"></i> Productos</a>
+                <a href="ventas.html"><i class="fas fa-cash-register"></i> Ventas</a>
+                <a href="inventario.html"><i class="fas fa-clipboard-list"></i> Inventario</a>
+                <a href="importacion.html"><i class="fas fa-file-import"></i> Importar</a>
+                <a href="reportes.html" class="active"><i class="fas fa-chart-line"></i> Reportes</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="section-header">
+                <h2><i class="fas fa-chart-line"></i> Reportes y Estadísticas</h2>
+                <div class="date-filter">
+                    <label>Periodo:</label>
+                    <select id="filtro-periodo">
+                        <option value="hoy">Hoy</option>
+                        <option value="semana">Últimos 7 días</option>
+                        <option value="mes" selected>Este Mes</option>
+                        <option value="anio">Este Año</option>
+                        <option value="todo">Histórico Completo</option>
+                    </select>
+                    <button class="btn-primary" id="btn-actualizar">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                    <button id="btn-exportar-reporte" class="btn-primary">
+                        <i class="fas fa-file-excel"></i> Exportar Reporte
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPIs -->
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-icon bg-green">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Ventas Totales</h3>
+                        <p id="kpi-ventas">$0.00</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-blue">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Transacciones</h3>
+                        <p id="kpi-transacciones">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-yellow">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Productos Vendidos</h3>
+                        <p id="kpi-productos">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-red">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Stock Bajo</h3>
+                        <p id="kpi-stock-bajo">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Ventas por Tiempo</h3>
+                    </div>
+                    <canvas id="chart-ventas-tiempo"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Top 5 Categorías</h3>
+                    </div>
+                    <canvas id="chart-categorias"></canvas>
+                </div>
+            </div>
+
+            <div class="tables-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Productos Más Vendidos</h3>
+                        <button class="btn-small" id="btn-export-top">
+                            <i class="fas fa-file-excel"></i> Exportar
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table id="tabla-top-productos">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Vendidos</th>
+                                    <th>Ingresos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Datos dinámicos -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Sistema de Gestión LolaShop © 2026 | Versión 1.0</p>
+        </footer>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="js/reportes.js"></script>
+</body>
+</html>

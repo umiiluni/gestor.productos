@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Inventario</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <h1>LolaShop</h1>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="productos.html"><i class="fas fa-box"></i> Productos</a>
+                <a href="ventas.html"><i class="fas fa-cash-register"></i> Ventas</a>
+                <a href="inventario.html" class="active"><i class="fas fa-clipboard-list"></i> Inventario</a>
+                <a href="importacion.html"><i class="fas fa-file-import"></i> Importar</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="page-header">
+                <h2><i class="fas fa-clipboard-list"></i> Control de Inventario</h2>
+                <button class="btn-primary" id="btn-ajuste-inventario">
+                    <i class="fas fa-edit"></i> Ajuste de Stock
+                </button>
+            </div>
+
+            <div class="inventario-stats">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #4CAF50;">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Productos</h4>
+                        <p id="stat-total-productos">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #FF9800;">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Valor Inventario</h4>
+                        <p id="stat-valor-inventario">$0.00</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #F44336;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Bajo Stock</h4>
+                        <p id="stat-bajo-stock">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: #2196F3;">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Rotación</h4>
+                        <p id="stat-rotacion">0%</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filtros-inventario">
+                <h3><i class="fas fa-filter"></i> Filtros</h3>
+                <div class="filtros-grid">
+                    <div class="filtro-group">
+                        <label>Categoría:</label>
+                        <select id="filtro-categoria">
+                            <option value="">Todas</option>
+                            <option value="Alimentos">Alimentos</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Limpieza">Limpieza</option>
+                            <option value="Bazar">Bazar</option>
+                        </select>
+                    </div>
+                    <div class="filtro-group">
+                        <label>Estado Stock:</label>
+                        <select id="filtro-estado">
+                            <option value="">Todos</option>
+                            <option value="bajo">Bajo Stock</option>
+                            <option value="normal">Stock Normal</option>
+                            <option value="sin">Sin Stock</option>
+                        </select>
+                    </div>
+                    <div class="filtro-group">
+                        <label>Rango Fechas:</label>
+                        <input type="text" id="filtro-fecha" placeholder="Seleccionar rango">
+                    </div>
+                    <div class="filtro-group">
+                        <button class="btn-secondary" id="btn-aplicar-filtros">
+                            <i class="fas fa-check"></i> Aplicar
+                        </button>
+                        <button class="btn-secondary" id="btn-limpiar-filtros">
+                            <i class="fas fa-redo"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3><i class="fas fa-list-ol"></i> Inventario Detallado</h3>
+                <div class="table-controls">
+                    <div class="export-buttons">
+                        <button class="btn-export" id="btn-exportar-excel">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="btn-export" id="btn-exportar-pdf">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="btn-export" id="btn-imprimir-inventario">
+                            <i class="fas fa-print"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+                <table id="tabla-inventario">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Costo</th>
+                            <th>Stock Actual</th>
+                            <th>Stock Mínimo</th>
+                            <th>Valor Total</th>
+                            <th>Estado</th>
+                            <th>Último Movimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Inventario se cargará aquí -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="inventario-alertas">
+                <h3><i class="fas fa-bell"></i> Alertas de Stock</h3>
+                <div class="alertas-container" id="alertas-container">
+                    <!-- Alertas se cargarán aquí -->
+                    <div class="alerta vacia">
+                        <i class="fas fa-check-circle"></i>
+                        <p>No hay alertas de stock en este momento</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Sistema de Gestión LolaShop © 2026 | Versión 1.0</p>
+        </footer>
+    </div>
+
+    <!-- Modal ajuste de stock -->
+    <div id="modal-ajuste" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3><i class="fas fa-edit"></i> Ajuste de Stock</h3>
+            <form id="form-ajuste">
+                <div class="form-group">
+                    <label for="ajuste-producto">Producto *</label>
+                    <select id="ajuste-producto" required>
+                        <!-- Opciones se cargarán con JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ajuste-tipo">Tipo de Movimiento *</label>
+                    <select id="ajuste-tipo" required>
+                        <option value="entrada">Entrada (Aumentar Stock)</option>
+                        <option value="salida">Salida (Disminuir Stock)</option>
+                        <option value="ajuste">Ajuste Manual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ajuste-cantidad">Cantidad *</label>
+                    <input type="number" id="ajuste-cantidad" required min="1">
+                </div>
+                <div class="form-group">
+                    <label for="ajuste-motivo">Motivo</label>
+                    <textarea id="ajuste-motivo" rows="3" placeholder="Ej: Compra proveedor, Venta, Pérdida, etc."></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn-success">
+                        <i class="fas fa-save"></i> Aplicar Ajuste
+                    </button>
+                    <button type="button" class="btn-secondary" id="btn-cancelar-ajuste">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal historial -->
+    <div id="modal-historial" class="modal">
+        <div class="modal-content historial-modal">
+            <span class="close-modal">&times;</span>
+            <h3><i class="fas fa-history"></i> Historial de Movimientos</h3>
+            <div class="historial-container" id="historial-container">
+                <!-- Historial se cargará aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script src="js/inventario.js"></script>
+    <script src="js/productos.js"></script>
+</body>
+</html>
