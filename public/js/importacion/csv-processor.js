@@ -105,9 +105,11 @@ class CSVProcessor {
                         codigo: item.codigo || item.CODIGO || item.Código || ImportacionCore.generarCodigoAutomatico(),
                         nombre: item.nombre || item.NOMBRE || item.Nombre || item.descripcion || 'Sin nombre',
                         categoria: item.categoria || item.CATEGORIA || item.Categoría || 'General',
-                        precio: parseFloat(item.precio || item.PRECIO || item.Precio || 0),
+                        precio: parseFloat(item.precio || item['Precio Venta'] || item.PRECIO || item.Precio || 0),
+                        costo: parseFloat(item.costo || item.Costo || item.COSTO || 0),
                         stock: parseInt(item.stock || item.STOCK || item.Stock || 0),
-                        stockMinimo: parseInt(item.stockMinimo || item['STOCK_MIN'] || 5)
+                        stockMinimo: parseInt(item.stockMinimo || item['Stock Mínimo'] || item.STOCK_MIN || 5),
+                        unidad: item.unidad || item.Unidad || item.UNIDAD || 'un'
                     }));
                     
                     ImportacionCore.productosImportar = productos;
