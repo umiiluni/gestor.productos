@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Venta</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container ventas-container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <h1>LolaShop</h1>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="productos.html"><i class="fas fa-box"></i> Productos</a>
+                <a href="ventas.html" class="active"><i class="fas fa-cash-register"></i> Ventas</a>
+                <a href="inventario.html"><i class="fas fa-clipboard-list"></i> Inventario</a>
+                <a href="importacion.html"><i class="fas fa-file-import"></i> Importar</a>
+            </nav>
+        </header>
+
+        <main class="ventas-main">
+            <div class="ventas-left">
+                <div class="scanner-section">
+                    <h3><i class="fas fa-barcode"></i> Escanear Producto</h3>
+                    <div class="scanner-input-group">
+                        <input type="text" id="venta-codigo-barra" placeholder="Código de barras" autofocus>
+                        <button class="btn-scan" id="btn-escanear-venta">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                        <button class="btn-search" id="btn-agregar-venta">
+                            <i class="fas fa-plus"></i> Agregar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="carrito-container">
+                    <h3><i class="fas fa-shopping-cart"></i> Carrito de Venta</h3>
+                    <div class="carrito-items" id="carrito-items">
+                        <!-- Los productos del carrito aparecerán aquí -->
+                        <div class="carrito-vacio">
+                            <i class="fas fa-shopping-cart fa-2x"></i>
+                            <p>El carrito está vacío</p>
+                            <p>Escanea o busca productos para agregar</p>
+                        </div>
+                    </div>
+                    
+                    <div class="carrito-resumen">
+                        <div class="resumen-linea">
+                            <span>Subtotal:</span>
+                            <span id="subtotal">$0.00</span>
+                        </div>
+                        <div class="resumen-linea">
+                            <span>IVA (21%):</span>
+                            <span id="iva">$0.00</span>
+                        </div>
+                        <div class="resumen-linea total">
+                            <span>TOTAL:</span>
+                            <span id="total-venta">$0.00</span>
+                        </div>
+                        
+                        <div class="pago-section">
+                            <h4><i class="fas fa-money-bill-wave"></i> Método de Pago</h4>
+                            <div class="pago-opciones">
+                                <label class="pago-opcion">
+                                    <input type="radio" name="pago" value="efectivo" checked>
+                                    <span>Efectivo</span>
+                                </label>
+                                <label class="pago-opcion">
+                                    <input type="radio" name="pago" value="tarjeta">
+                                    <span>Tarjeta</span>
+                                </label>
+                                <label class="pago-opcion">
+                                    <input type="radio" name="pago" value="transferencia">
+                                    <span>Transferencia</span>
+                                </label>
+                            </div>
+                            
+                            <div class="efectivo-section" id="efectivo-section">
+                                <label>Recibido:</label>
+                                <input type="number" id="efectivo-recibido" placeholder="0.00">
+                                <div class="vuelto">
+                                    <span>Vuelto:</span>
+                                    <span id="vuelto">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="carrito-botones">
+                            <button class="btn-success" id="btn-finalizar-venta">
+                                <i class="fas fa-check-circle"></i> Finalizar Venta
+                            </button>
+                            <button class="btn-secondary" id="btn-cancelar-venta">
+                                <i class="fas fa-times-circle"></i> Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ventas-right">
+                <div class="productos-rapidos">
+                    <h3><i class="fas fa-bolt"></i> Productos Rápidos</h3>
+                    <div class="productos-grid" id="productos-rapidos">
+                        <!-- Productos frecuentes se cargarán aquí -->
+                    </div>
+                </div>
+
+                <div class="ventas-recientes">
+                    <h3><i class="fas fa-history"></i> Ventas de Hoy</h3>
+                    <div class="table-container">
+                        <table id="tabla-ventas-hoy">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Hora</th>
+                                    <th>Productos</th>
+                                    <th>Total</th>
+                                    <th>Pago</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Ventas recientes se cargarán aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Sistema de Gestión LolaShop © 2026 | Versión 1.0</p>
+        </footer>
+    </div>
+
+    <!-- Modal de escáner -->
+    <div id="scanner-modal-ventas" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3><i class="fas fa-camera"></i> Escáner de Código de Barras</h3>
+            <div id="scanner-container-ventas">
+                <video id="scanner-video-ventas" width="100%" height="300"></video>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de ticket -->
+    <div id="ticket-modal" class="modal">
+        <div class="modal-content ticket-content">
+            <span class="close-modal">&times;</span>
+            <h3><i class="fas fa-receipt"></i> Ticket de Venta</h3>
+            <div class="ticket" id="ticket-impresion">
+                <div class="ticket-header">
+                    <h4>LolaShop</h4>
+                    <p>Florencio Sánchez - 965</p>
+                    <p>Tel: 3541218523</p>
+                    <p>Fecha: <span id="ticket-fecha"></span></p>
+                    <p>Venta #: <span id="ticket-id"></span></p>
+                </div>
+                <div class="ticket-items" id="ticket-items">
+                    <!-- Items del ticket -->
+                </div>
+                <div class="ticket-totales">
+                    <p>Subtotal: <span id="ticket-subtotal"></span></p>
+                    <p>IVA 21%: <span id="ticket-iva"></span></p>
+                    <p><strong>TOTAL: <span id="ticket-total"></span></strong></p>
+                    <p>Método: <span id="ticket-pago"></span></p>
+                    <p>Gracias por su compra!</p>
+                </div>
+            </div>
+            <div class="ticket-buttons">
+                <button class="btn-primary" id="btn-imprimir-ticket">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+                <button class="btn-secondary" id="btn-cerrar-ticket">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/ventas.js"></script>
+    <script src="js/scanner.js"></script>
+    <script src="js/productos.js"></script>
+</body>
+</html>
